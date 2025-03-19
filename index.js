@@ -76,7 +76,7 @@ app.get('/tasks/sort/by-priority', (req, res) => {
     res.json(sortedTasks);
 });
 
-//API to update task status by id
+//API to update task status by ID
 app.post('/tasks/:id/status', (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
