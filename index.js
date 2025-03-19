@@ -77,10 +77,10 @@ app.get('/tasks/sort/by-priority', (req, res) => {
 });
 
 //API to update task status by id
-app.post('tasks/:id/status', (req, res) => {
+app.post('/tasks/:id/status', (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
-    const task = tasks.find(task => task.id === id);
+    const task = tasks.find(task => task.id === parseInt(id));
     task.status = status;
     res.status(201).json({ message: 'Updated succesdfully', task: task });
 });
