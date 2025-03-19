@@ -40,13 +40,6 @@ app.get('/projects/:name/tasks', (req, res) => {
     res.status(200).json(projectTasks);
 });
 
-// API to sort tasks by priority (high > medium > low)
-app.get('/tasks/sort/by-priority', (req, res) => {
-    const priorityOrder = { high: 1, medium: 2, low: 3 };
-    const sortedTasks = [...tasks].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
-    res.json(sortedTasks);
-});
-
 // API to add a new task
 app.post('/tasks', (req, res) => {
     const { title, project, assignedTo, priority, status } = req.body;
@@ -58,6 +51,38 @@ app.post('/tasks', (req, res) => {
     const newTask = { id: newId, title, project, assignedTo, priority, status };
     tasks.push(newTask);
     res.status(201).json(newTask);
+});
+
+// API to view All Tasks Assigned to a Person
+app.get('/users/:name/tasks', (req, res) => {
+    const { name } = req.params;
+    const projectTasks = tasks.filter(task => task.assignedTo == name);
+    if (projectTasks.length === 0) {
+        res.status(404).json({ message: 'No tasks found assigned to this person' });
+    }
+    res.status(200).json(projectTasks);
+});
+
+// API to view Pending Tasks:
+app.get('/tasks/pending', (req, res) => {
+    const pendingTasks = tasks.filter(task => task.status === 'in progress');
+    res.status(200).json(pendingTasks);
+});
+
+// API to sort tasks by priority (high > medium > low)
+app.get('/tasks/sort/by-priority', (req, res) => {
+    const priorityOrder = { high: 1, medium: 2, low: 3 };
+    const sortedTasks = [...tasks].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+    res.json(sortedTasks);
+});
+
+//API to update task status by id
+app.post('tasks/:id/status', (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const task = tasks.find(task => task.id === id);
+    task.status = status;
+    res.status(201).json({ message: 'Updated succesdfully', task: task });
 });
 
 const PORT = 3010;
